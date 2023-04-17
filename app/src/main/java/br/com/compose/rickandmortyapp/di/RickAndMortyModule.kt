@@ -3,11 +3,11 @@ package br.com.compose.rickandmortyapp.di
 import br.com.compose.rickandmortyapp.data.repository.RickAndMortyRepository
 import br.com.compose.rickandmortyapp.data.repository.RickAndMortyRepositoryImpl
 import br.com.compose.rickandmortyapp.data.service.RickAndMortyService
-import br.com.compose.rickandmortyapp.data.service.RickAndMortyServiceImpl
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ActivityComponent
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 import okhttp3.OkHttpClient
@@ -16,12 +16,19 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 @Module
-@InstallIn(SingletonComponent::class)
+@InstallIn(ActivityComponent::class)
 abstract class GeneralModule {
 
-    companion object {
-        private const val BASE_URL = "TODO(falta implementar)"
-    }
+    @Binds
+    abstract fun bindRickAndMortyRepository(repository: RickAndMortyRepositoryImpl): RickAndMortyRepository
+
+}
+
+@Module
+@InstallIn(SingletonComponent::class)
+object RickAndMortyServiceModule {
+
+    private const val BASE_URL = "https://rickandmortyapi.com/api/"
 
     @Singleton
     @Provides
@@ -32,17 +39,16 @@ abstract class GeneralModule {
             .build()
 
     @Singleton
+    @Provides
     fun providesRetrofit(okHttpClient: OkHttpClient): Retrofit = Retrofit
         .Builder()
         .addConverterFactory(GsonConverterFactory.create())
-        .baseUrl(Companion.BASE_URL)
+        .baseUrl(BASE_URL)
         .client(okHttpClient)
         .build()
 
-
-    @Binds
-    abstract fun bindRickAndMortyService(service: RickAndMortyServiceImpl): RickAndMortyService
-
-    @Binds
-    abstract fun bindRickAndMortyRepository(repository: RickAndMortyRepositoryImpl): RickAndMortyRepository
+    @Provides
+    @Singleton
+    fun provideRickAndMortyService(retrofit: Retrofit): RickAndMortyService =
+        retrofit.create(RickAndMortyService::class.java)
 }
