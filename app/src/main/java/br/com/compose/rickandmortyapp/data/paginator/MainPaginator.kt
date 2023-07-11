@@ -26,8 +26,10 @@ class MainPaginator<Key, Item>(
 
         result.body()?.let {
             onSuccess(it.charactersList, currentKey)
-            getNextKey(it.charactersList)
+            currentKey = getNextKey(it.charactersList)
         } ?: onError
+
+        isMakingRequest = false
     }
 
 

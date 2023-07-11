@@ -20,7 +20,7 @@ class RickAndMortyViewModel @Inject constructor(
 ) : ViewModel() {
 
     companion object {
-        const val SCREEN_STATE_KEY = "SCREEN_STATE_KEY"
+        private const val SCREEN_STATE_KEY = "SCREEN_STATE_KEY"
     }
 
     val screenStateFlow = savedStateHandle.getStateFlow(SCREEN_STATE_KEY, ScreenState())
@@ -41,7 +41,6 @@ class RickAndMortyViewModel @Inject constructor(
     private fun handleSuccess(): suspend (Items: List<RMCharacter>, newKey: Int) -> Unit =
         { items, nextPage ->
 
-
             savedStateHandle[SCREEN_STATE_KEY] = screenStateFlow.value.copy(
                 items = screenStateFlow.value.items + items,
                 page = nextPage,
@@ -56,7 +55,9 @@ class RickAndMortyViewModel @Inject constructor(
         }
 
     private fun handleRequestResponse(): suspend (nextKey: Int) -> Response<CharactersResponse> =
-        { nextPage -> repository.getCharactersByPage(nextPage) }
+        { nextPage ->
+            repository.getCharactersByPage(nextPage)
+        }
 
     private fun setIsLoading(isLoading: Boolean): (Boolean) -> Unit =
         { savedStateHandle[SCREEN_STATE_KEY] = screenStateFlow.value.copy(isLoading = isLoading) }
@@ -71,5 +72,5 @@ data class ScreenState(
     val items: List<RMCharacter> = emptyList(),
     val error: String? = null,
     val endReached: Boolean = false,
-    val page: Int = 0
+    val page: Int = 1
 ) : Serializable

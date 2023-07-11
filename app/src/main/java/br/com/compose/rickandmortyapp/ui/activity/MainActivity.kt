@@ -25,7 +25,6 @@ class MainActivity : ComponentActivity() {
 
                     val screenState by viewModel.screenStateFlow.collectAsState()
 
-
                     CharactersList(
                         state = screenState,
                         onLoadNextCharacters = {

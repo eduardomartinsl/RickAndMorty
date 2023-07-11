@@ -22,11 +22,11 @@ fun CharactersList(state: ScreenState, onLoadNextCharacters: () -> Unit) {
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
 
-        items(characters.size) { i ->
-            if ((i >= (characters.size - 1)) && state.endReached.not() && state.isLoading) {
+        items(characters.size) { index ->
+            if ((index >= (characters.size - 1)) && state.endReached.not() && state.isLoading.not()) {
                 onLoadNextCharacters()
             }
-            val character = characters[i]
+            val character = characters[index]
             CharacterItem(character = character)
 
         }
